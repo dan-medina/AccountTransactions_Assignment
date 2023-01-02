@@ -11,10 +11,12 @@ output_file = sys.argv[2]
 customer_data = {}
 
 def read_transactions():
+    #read from input csv file
     with open(input_file, newline='') as csvfile:
         reader = csv.reader(csvfile)
         next(reader)
         for row in reader:
+            #checking if line is empty
             if not row[0]:
                 continue
 
@@ -30,18 +32,21 @@ def read_transactions():
                 #if not begin tracking transaction data for current month/year
                 customer_data[row[0]][month_key] = {"MinBalance": int(row[2]), "MaxBalance": int(row[2]), "Ending Balance": 0}
 
+            #updating customer's monthly data based on current transaction
             customer_data[row[0]][month_key]["Ending Balance"] += int(row[2])
             customer_data[row[0]][month_key]["MinBalance"] = min(customer_data[row[0]][month_key]["MinBalance"], customer_data[row[0]][month_key]["Ending Balance"])
             customer_data[row[0]][month_key]["MaxBalance"] = max(customer_data[row[0]][month_key]["MaxBalance"], customer_data[row[0]][month_key]["Ending Balance"])
     
-
+    #write to output csv file
     with open(output_file, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
 
+        #iterate through each stored customer id
         for customer in customer_data:
+            #iterate through customer's data for each month
             for month in customer_data[customer]:
-                print([customer, month, customer_data[customer][month][0], customer_data[customer][month][1], customer_data[customer][month][2]])
-                writer.writerow([customer, month, customer_data[customer][month][0], customer_data[customer][month][1], customer_data[customer][month][2]])
+                #write data for current month to output csv file
+                writer.writerow([customer, str(month), customer_data[customer][month]["MinBalance"], customer_data[customer][month]["MaxBalance"], customer_data[customer][month]["Ending Balance"]])
 
     return 
 
