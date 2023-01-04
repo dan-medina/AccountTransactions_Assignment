@@ -1,5 +1,11 @@
+#By: Daniel Medina
+
 import csv
 import sys
+
+#  USAGE: Run file on any platform with a Python3 interpreter such as Terminal, Command Shell, or an IDE as follows 
+#  with the input file and output file names as the first and second command line arguments respectively:
+#  python account_transactions.py [INPUT_FILE/FILEPATH] [OUTPUT_FILE/FILEPATH]
 
 if len(sys.argv) < 2:
     print("Usage: python account_transactions.py input_file output_file")
