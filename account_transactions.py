@@ -85,8 +85,29 @@ def read_transactions():
     return
 
 def store_customer_data():
+    for customer in transaction_data:
+        customer_data[customer] = {}
+        for month in transaction_data[customer]:
+            curr_balance = 0
+            min_balance = 0
+            max_balance = 0
+            for i, day in enumerate(transaction_data[customer][month]):
+                trans_sorted = sorted(transaction_data[customer][month][day], reverse=True)
+                if i == 0:
+                    curr_balance += int(trans_sorted[0])
+                    min_balance = int(trans_sorted[0])
+                    max_balance = int(trans_sorted[0])
+                    for j in range(1, len(trans_sorted)):
+                        curr_balance += int(trans_sorted[j])
+                        min_balance = min(min_balance, curr_balance)
+                        max_balance = max(max_balance, curr_balance)
+                else:
+                    for j in range(0, len(trans_sorted)):
+                        curr_balance += int(trans_sorted[j])
+                        min_balance = min(min_balance, curr_balance)
+                        max_balance = max(max_balance, curr_balance)
 
-
+            customer_data[customer][month] = {"MinBalance": min_balance, "MaxBalance": max_balance, "EndingBalance": curr_balance}
 
     return
 
@@ -95,13 +116,14 @@ def create_output():
         writer = csv.writer(csvfile)
 
         #iterate through each stored customer id
-        for customer in transaction_data:
+        for customer in customer_data:
             #iterate through customer's data for each month
-            for month in transaction_data[customer]:
+            for month in customer_data[customer]:
                 #write data for current month to output csv file
-                writer.writerow([customer, str(month), transaction_data[customer][month]])
+                writer.writerow([customer, str(month), customer_data[customer][month]["MinBalance"], customer_data[customer][month]["MaxBalance"], customer_data[customer][month]["EndingBalance"]])
     return
 
 
 read_transactions()
+store_customer_data()
 create_output()
